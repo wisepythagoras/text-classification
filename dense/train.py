@@ -112,7 +112,7 @@ model.compile(loss='categorical_crossentropy',
 model.fit(train_x, train_y,
           batch_size=32,
           epochs=10,
-          verbose=1,
+          verbose=1, # type: ignore
           validation_split=0.1,
           shuffle=True)
 

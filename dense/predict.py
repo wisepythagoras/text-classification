@@ -1,11 +1,11 @@
-import json
+import sys
 import numpy as np
 from keras.preprocessing.text import Tokenizer, text_to_word_sequence, tokenizer_from_json
 from keras.models import model_from_json
 import tensorflow as tf
 
 labels = ['negative', 'neutral', 'positive']
-tokenizer: Tokenizer = None
+tokenizer: Tokenizer | None = None
 
 with open('tokenizer.json', 'r') as t:
     tokenizer = tokenizer_from_json(t.read())
@@ -16,6 +16,11 @@ json_file.close()
 
 # Load the model and the weights.
 model = model_from_json(loaded_model_json)
+
+if model is None:
+    print('No trained model')
+    sys.exit(1)
+
 model.load_weights('classifier-weights.h5')
 model.make_predict_function()
 
