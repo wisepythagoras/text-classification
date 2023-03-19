@@ -3,3 +3,4 @@ data/*.tsv
 classifier-*
 tokenizer.json
 dictionary.json
+.vscode
