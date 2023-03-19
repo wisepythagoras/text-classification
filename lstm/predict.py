@@ -1,7 +1,9 @@
 import sys
 import numpy as np
-from keras.preprocessing.text import Tokenizer, text_to_word_sequence, tokenizer_from_json
+import keras.preprocessing.text as kpt
+from keras.preprocessing.text import Tokenizer, tokenizer_from_json
 from keras.models import model_from_json
+from keras.utils import pad_sequences
 
 labels = ['negative', 'neutral', 'positive']
 tokenizer: Tokenizer | None = None
@@ -20,18 +22,18 @@ if model is None:
     print('No trained model')
     sys.exit(1)
 
+# After we create the model, we need to load the weights for each neuron.
 model.load_weights('classifier-weights.h5')
 model.make_predict_function()
 
 print(model.summary())
 
 
-def evaluate(sentence: str) -> list[list[float]]:
-    words = text_to_word_sequence(sentence)
-    inp = tokenizer.texts_to_sequences([words])
-    inp = tokenizer.sequences_to_matrix(inp, mode='binary')
+def evaluate(sentence: str, threaded=False) -> list[list[float]]:
+    input = tokenizer.texts_to_sequences([sentence])
+    input = pad_sequences(input, 140)
 
-    return model.predict(inp)
+    return model.predict(input)
 
 
 if __name__ == '__main__':
