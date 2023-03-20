@@ -1,6 +1,5 @@
 import json
 import numpy as np
-import keras.preprocessing.text as kpt
 from keras.preprocessing.text import Tokenizer
 from keras.layers import Dense, LSTM, Conv1D, Embedding, MaxPooling1D
 from keras.utils import to_categorical, pad_sequences
