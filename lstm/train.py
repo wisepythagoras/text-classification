@@ -4,6 +4,7 @@ from keras.preprocessing.text import Tokenizer
 from keras.layers import Dense, LSTM, Conv1D, Embedding, MaxPooling1D
 from keras.utils import to_categorical, pad_sequences
 from keras import Input, Model
+from math import floor
 
 # This constant represents the shape of the output. Since we have three different states (negative,
 # neutral, positive) we want to instruct our neural network to give us probabilities for just those.
@@ -23,7 +24,7 @@ train_x = [x[0] for x in training]
 train_y = np.asarray([x[1] for x in training])
 
 # In this example I'll test with more words than the dense example.
-max_words = 5000
+max_words = 8000
 max_text_len = 140
 
 # The tokenizer will be used to tokenize the tweets and index all words that were found in the entire
@@ -69,12 +70,14 @@ model.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
+train_amount = floor(len(train_x) * 0.7)
+
 # Like in the `dense` example, you can try tweaking the settings here and observe the effects.
-model.fit(train_x, train_y,
+model.fit(train_x[:train_amount], train_y[:train_amount],
           batch_size=64,
           epochs=10,
           verbose=1, # type: ignore
-          validation_split=0.1,
+          validation_data=(train_x[-train_amount + 1:], train_y[-train_amount + 1:]),
           shuffle=True)
 
 # I save the model and the weights here so that I can deploy it and reuse it as I see fit.
