@@ -46,6 +46,7 @@ if __name__ == '__main__':
         if len(sentence) == 0:
             break
 
+        sentence = sentence.lower().strip()
         pred = evaluate(sentence)
 
         print('')

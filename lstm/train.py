@@ -18,7 +18,7 @@ training = np.genfromtxt(
     usecols=(0, 1), dtype=None)
 
 # The first column contains all the Tweets. Make sure that these are cleaned of special characters.
-train_x = [x[0] for x in training]
+train_x = [x[0].lower().strip() for x in training]
 
 # The second column contains all the labels.
 train_y = np.asarray([x[1] for x in training])
