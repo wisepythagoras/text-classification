@@ -2,7 +2,7 @@ import json
 import numpy as np
 from keras.preprocessing.text import Tokenizer
 from keras.layers import Dense, LSTM, Conv1D, Embedding, MaxPooling1D, \
-                         Bidirectional, BatchNormalizationV2, PReLU, GlobalAveragePooling1D, GRUV2
+                         Bidirectional
 from keras.utils import to_categorical, pad_sequences
 from keras.optimizers import Adam
 from keras import Input, Model
@@ -18,6 +18,7 @@ SHAPE = 3
 training = np.genfromtxt(
     '../data/out.tsv', delimiter='\t', skip_header=1,
     usecols=(0, 1), dtype=None)
+np.random.shuffle(training)
 
 # The first column contains all the Tweets. Make sure that these are cleaned of special characters.
 train_x = [x[0].lower().strip() for x in training]
@@ -57,33 +58,32 @@ train_y = to_categorical(train_y, SHAPE)
 # I follow the exact same pattern as the `dense` example.
 inputs = Input(shape=(max_text_len,))
 
-# I changed the strategy here a little bit and used two `Bidirectional(LSTM(X))` layers. This method
-# is memory-expensive and requires more epochs to train.
+# The strategy has changed yet again. There are two convolutional layers that feed into a bidirectional
+# LSTM and from there it goes into a Dense layer before the output.
 out = Embedding(max_words, 64, input_length=max_text_len)(inputs)
-out = Conv1D(filters=64, kernel_size=3, padding='same', activation='relu')(out)
+out = Conv1D(64, 3, padding='same', activation='relu')(out)
 out = MaxPooling1D(pool_size=2)(out)
-out = Bidirectional(LSTM(96, return_sequences=True, activation='softsign'))(out)
-out = GRUV2(96)(out)
-# The following also works instead of the above.
-# out = GlobalAveragePooling1D()(out)
-out = Dense(64, activation='relu')(out)
-out = PReLU()(out)
-out = Dense(32, activation='relu')(out)
+out = Conv1D(64, 3, padding='same', activation='relu')(out)
+out = MaxPooling1D(pool_size=2)(out)
+out = Bidirectional(LSTM(96, activation='softsign'))(out) #, return_sequences=True
+out = Dense(32, activation='sigmoid')(out)
 
 # The final layer gives us the output with the desired shape: An array of three predictions.
 out = Dense(SHAPE, activation='softmax')(out)
 
 model = Model(inputs, [out])
+print(model.summary())
+# import sys; sys.exit()
 model.compile(loss='categorical_crossentropy',
-              optimizer=Adam(learning_rate=1e-4),
+              optimizer=Adam(learning_rate=1e-4*3),
               metrics=['accuracy'])
 
-train_amount = floor(len(train_x) * 0.7)
+train_amount = floor(len(train_x) * 0.75)
 
 # Like in the `dense` example, you can try tweaking the settings here and observe the effects.
 model.fit(train_x[:train_amount], train_y[:train_amount],
-          batch_size=64,
-          epochs=20,
+          batch_size=32,
+          epochs=12,
           verbose=1, # type: ignore
           validation_data=(train_x[-train_amount + 1:], train_y[-train_amount + 1:]),
           shuffle=True)
