@@ -6,3 +6,4 @@ classifier-*
 tokenizer.json
 dictionary.json
 .vscode
+__pycache__

@@ -4,6 +4,7 @@ import keras.preprocessing.text as kpt
 from keras.preprocessing.text import Tokenizer, tokenizer_from_json
 from keras.models import model_from_json
 from keras.utils import pad_sequences
+from download import clean_str
 
 labels = ['negative', 'neutral', 'positive']
 tokenizer: Tokenizer | None = None
@@ -46,7 +47,7 @@ if __name__ == '__main__':
         if len(sentence) == 0:
             break
 
-        sentence = sentence.lower().strip()
+        sentence = clean_str(sentence)
         pred = evaluate(sentence)
 
         print('')
