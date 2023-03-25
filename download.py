@@ -13,6 +13,12 @@ def clean_str(s: str) -> str:
     s = s.replace('\\u002c', ",")
     s = s.replace('&amp;', ' and ')
     s = s.replace('\t', ' ')
+    s = s.replace('"', '')
+    s = s.replace('\\', '')
+    s = s.replace('/', '')
+    s = re.sub(r'www\.[^\.]+\.[^\b]+', '', s)
+    s = re.sub(r'\\?"\\?""""', '', s)
+    s = re.sub(r'&(lt|gt);', '', s)
     s = re.sub(r'isn\'?t', 'is not', s)
     s = re.sub(r'don\'?t', 'do not', s)
     s = re.sub(r'won\'?t', 'will not', s)
@@ -26,9 +32,10 @@ def clean_str(s: str) -> str:
     s = re.sub(r'(there|who|it)\'s', '\\1 is', s)
     s = re.sub(r'(you|they|we)\'?re', '\\1 are', s)
     s = re.sub(r'https?://t.co/[^\s]+', '', s)
-    s = re.sub(r'@[^\s]+', '@user', s)
+    s = re.sub(r'@[^\s]+', '', s)
 
-    s = re.sub(r'([a-z0-9])([.?!\"/,()])', '\\1 \\2', s)
+    s = re.sub(r'([a-z0-9])([:.?!\"/,)])', '\\1 \\2', s)
+    s = re.sub(r'([:.?!\"/,(])([a-z0-9])', '\\1 \\2', s)
 
     return s.strip()
 

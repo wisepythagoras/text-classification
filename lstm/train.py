@@ -14,7 +14,7 @@ SHAPE = 3
 # of data (for testing your model on smaller datasets) by adding `max_rows=X`, where X a positive
 # number.
 training = np.genfromtxt(
-    '../data/out.tsv', delimiter='\t', skip_header=1,
+    '../data/out2.tsv', delimiter='\t', skip_header=1,
     usecols=(0, 1), dtype=None)
 
 # The first column contains all the Tweets. Make sure that these are cleaned of special characters.
