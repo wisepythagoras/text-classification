@@ -2,7 +2,7 @@ import json
 import numpy as np
 from keras.preprocessing.text import Tokenizer
 from keras.layers import Dense, LSTM, Conv1D, Embedding, MaxPooling1D, \
-                         Bidirectional
+                         Bidirectional, Dropout
 from keras.utils import to_categorical, pad_sequences
 from keras.optimizers import Adam
 from keras import Input, Model
@@ -65,8 +65,9 @@ out = Conv1D(64, 3, padding='same', activation='relu')(out)
 out = MaxPooling1D(pool_size=2)(out)
 out = Conv1D(64, 3, padding='same', activation='relu')(out)
 out = MaxPooling1D(pool_size=2)(out)
-out = Bidirectional(LSTM(96, activation='softsign'))(out) #, return_sequences=True
+out = Bidirectional(LSTM(96, activation='softsign', dropout=0.1))(out) #, return_sequences=True
 out = Dense(32, activation='sigmoid')(out)
+out = Dropout(0.2)(out)
 
 # The final layer gives us the output with the desired shape: An array of three predictions.
 out = Dense(SHAPE, activation='softmax')(out)
@@ -78,12 +79,12 @@ model.compile(loss='categorical_crossentropy',
               optimizer=Adam(learning_rate=1e-4*3),
               metrics=['accuracy'])
 
-train_amount = floor(len(train_x) * 0.75)
+train_amount = floor(len(train_x) * 0.85)
 
 # Like in the `dense` example, you can try tweaking the settings here and observe the effects.
 model.fit(train_x[:train_amount], train_y[:train_amount],
           batch_size=32,
-          epochs=12,
+          epochs=15,
           verbose=1, # type: ignore
           validation_data=(train_x[-train_amount + 1:], train_y[-train_amount + 1:]),
           shuffle=True)

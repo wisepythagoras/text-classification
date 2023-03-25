@@ -1,5 +1,7 @@
 data/*.csv
 data/*.tsv
+data/*.zip
+data/tweeteval-main
 classifier-*
 tokenizer.json
 dictionary.json
