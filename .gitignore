@@ -7,3 +7,4 @@ tokenizer.json
 dictionary.json
 .vscode
 __pycache__
+data/*.json

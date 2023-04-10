@@ -16,6 +16,7 @@ def clean_str(s: str) -> str:
     s = s.replace('"', '')
     s = s.replace('\\', '')
     s = s.replace('/', '')
+    s = re.sub(r'[\(\)#]+', '', s)
     s = re.sub(r'www\.[^\.]+\.[^\b]+', '', s)
     s = re.sub(r'\\?"\\?""""', '', s)
     s = re.sub(r'&(lt|gt);', '', s)
