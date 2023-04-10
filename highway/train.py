@@ -69,12 +69,12 @@ out = Conv1D(96, 3, padding='same', activation='relu', name='pre_highway_conv_fi
 out = MaxPooling1D(pool_size=2, name='post_conv_max_pooling')(out)
 out = BatchNormalizationV2(name='batch_normalization_1')(out)
 out = Highway(name='main_highway')(out)
-# out = Dropout(0.1)(out)
+out = Dropout(0.15)(out)
 out = BatchNormalizationV2(name='batch_normalization_2')(out)
 out = Bidirectional(LSTM(96, dropout=0.2, recurrent_dropout=0.1, activation='relu'), name='main_lstm')(out)
 out = BatchNormalizationV2(name='batch_normalization_3')(out)
 out = Dense(32, activation='relu', name='dense_pre_output')(out)
-# out = Dropout(0.1)(out)
+out = Dropout(0.2)(out)
 
 # out = Embedding(max_words, 96, input_length=max_text_len)(inputs)
 # out = Conv1D(96, 3, padding='same', activation='relu')(out)
@@ -95,12 +95,12 @@ model.compile(loss='categorical_crossentropy',
               optimizer=Adam(learning_rate=1e-4), # learning_rate=1e-4
               metrics=['accuracy'])
 
-train_amount = floor(len(train_x) * 0.8) # 0.85
+train_amount = floor(len(train_x) * 0.85)
 
 # Like in the `dense` example, you can try tweaking the settings here and observe the effects.
 model.fit(train_x[:train_amount], train_y[:train_amount],
           batch_size=32,
-          epochs=10, # 16
+          epochs=12,
           verbose=1, # type: ignore
           validation_data=(train_x[-train_amount + 1:], train_y[-train_amount + 1:]),
           shuffle=True)

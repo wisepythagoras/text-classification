@@ -29,7 +29,7 @@ class Highway(Layer):
         self.dense_1 = Dense(
             input_shape=input_shape,
             units=dim,
-            bias_initializer=transform_gate_bias_initializer,
+            bias_initializer=transform_gate_bias_initializer, # type: ignore
             name=layer_name + 'internal_dense_1'
         )
         self.dense_2 = Dense(
