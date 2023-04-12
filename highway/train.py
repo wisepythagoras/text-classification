@@ -56,7 +56,7 @@ with open('tokenizer.json', 'w') as tokenizer_file:
 train_x = tokenizer.texts_to_sequences(train_x)
 train_x = pad_sequences(train_x, maxlen=max_text_len)
 
-# Like previously mentioned, we need to do something similar with the labels. So we create categories.
+# Like previously mentioned, wegit  need to do something similar with the labels. So we create categories.
 train_y = to_categorical(train_y, SHAPE)
 
 # I follow the exact same pattern as the `dense` example.
@@ -68,7 +68,7 @@ out = Embedding(max_words, 96, input_length=max_text_len, name='input_embeddings
 out = Conv1D(96, 3, padding='same', activation='relu', name='pre_highway_conv_filter')(out)
 out = MaxPooling1D(pool_size=2, name='post_conv_max_pooling')(out)
 out = BatchNormalizationV2(name='batch_normalization_1')(out)
-out = Highway(name='main_highway')(out)
+out = Highway(activation='tanh', name='main_highway')(out)
 out = Dropout(0.15)(out)
 out = BatchNormalizationV2(name='batch_normalization_2')(out)
 out = Bidirectional(LSTM(96, dropout=0.2, recurrent_dropout=0.1, activation='relu'), name='main_lstm')(out)
@@ -100,7 +100,7 @@ train_amount = floor(len(train_x) * 0.85)
 # Like in the `dense` example, you can try tweaking the settings here and observe the effects.
 model.fit(train_x[:train_amount], train_y[:train_amount],
           batch_size=32,
-          epochs=12,
+          epochs=14,
           verbose=1, # type: ignore
           validation_data=(train_x[-train_amount + 1:], train_y[-train_amount + 1:]),
           shuffle=True)

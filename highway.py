@@ -3,10 +3,10 @@ import tensorflow as tf
 from keras.engine.base_layer import Layer
 from keras.layers import Dense, Activation, Multiply, Add, Lambda
 from keras import initializers
-# from tf.keras.initializers import Constant
 
 
 # This came from here: https://github.com/ParikhKadam/Highway-Layer-Keras/blob/master/highway_layer.py
+# More info: https://gist.github.com/ParikhKadam/7d58b25a6bab979f5fab683d994b279e
 class Highway(Layer):
     activation = None
     transform_gate_bias = None
@@ -23,7 +23,6 @@ class Highway(Layer):
         # Create a trainable weight variable for this layer.
         dim = input_shape[-1]
         transform_gate_bias_initializer = tf.initializers.Constant(self.transform_gate_bias)
-        input_shape_dense_1 = input_shape[-1]
         layer_name = self.name if self.name is not None else '' + ':'
 
         self.dense_1 = Dense(
@@ -55,8 +54,7 @@ class Highway(Layer):
         transformed_data = Activation(self.activation, name='transformed_activation')(transformed_data)
         transformed_gated = Multiply(name='transformed_multiply')([transform_gate, transformed_data])
         identity_gated = Multiply(name='identity_gated')([carry_gate, x])
-        value = Add(name='highway_value_add')([transformed_gated, identity_gated])
-        return value
+        return Add(name='highway_value_add')([transformed_gated, identity_gated])
 
     def compute_output_shape(self, input_shape):
         return input_shape
